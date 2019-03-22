@@ -1,0 +1,25 @@
+body {
+  background-color: #f6f8fa;
+}
+.full-width {
+  width: 100%;
+  min-height: 100%;
+}
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-self: flex-start;
+}
+.center-content .form_block {
+  max-width: 820px;
+  position: relative;
+  margin: 50px auto;
+  background: #fff;
+}
+.center-content .form_block .form_block__wrapper {
+  padding: 30px;
+}
+.center-content .form_block .form_block__wrapper .form_block__header span.md-display-1 {
+  color: #333;
+}
+
