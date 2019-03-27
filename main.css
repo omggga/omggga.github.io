@@ -10449,6 +10449,7 @@ table.v-table tfoot tr td {
 }
 html {
   overflow-y: auto;
+  touch-action: manipulation;
 }
 .theme--light.application {
   background-color: #01cad1;
