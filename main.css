@@ -10474,4 +10474,10 @@ html {
   padding-top: 0;
   margin-top: 0;
 }
+.dates-comobobox .v-select__slot {
+  height: 0px;
+}
+.dates-comobobox .v-select__slot .v-select__selections {
+  display: none;
+}
 
