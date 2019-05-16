@@ -10245,7 +10245,10 @@ html {
 }
 .slider-element-text .v-text-field__slot input {
   font-size: 30px;
+  height: 60px;
+  line-height: 60px;
   margin-top: -10px;
+  vertical-align: top;
 }
 .slider-element-text.active .v-text-field__slot input {
   font-size: 30px;
