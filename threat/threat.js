@@ -326,8 +326,8 @@ class Player extends Unit {
 	checkFaction(tranquilAir = false) {
 		if (this.dies || this.tank) return;
 
+		if (1038 in this.buffs || !this.isBuffInferred(25895)) return;
 		this.buffs[25895] = true;
-		this.buffs[25909] = true;
 	}
 	// Extra stance detection
 	checkWarrior(events) {
