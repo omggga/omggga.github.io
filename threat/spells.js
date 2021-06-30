@@ -966,18 +966,25 @@ const spellFunctions = {
          9745: handler_modDamage(1.75, "Maul (Rank 5)"),
          9880: handler_modDamage(1.75, "Maul (Rank 6)"),
          9881: handler_modDamage(1.75, "Maul"),
+         26996: handler_threatOnHit(322, "Maul 8"), //https://zidnae.gitlab.io/tbc-armor-penetration-calc/tbc_bear_tc.html
 
           779: handler_modDamage(1.75, "Swipe (Rank 1)"),
           780: handler_modDamage(1.75, "Swipe (Rank 2)"),
           769: handler_modDamage(1.75, "Swipe (Rank 3)"),
          9754: handler_modDamage(1.75, "Swipe (Rank 4)"),
          9908: handler_modDamage(1.75, "Swipe"),
+         26997: handler_damage, //swipe 6
+
+         33987:handler_modDamage(1.3, "Mangle (Rank 3)"), //Mangle 3
+
+         33745: handler_threatOnHit(285, "Lacerate"),//Lacerate
 
            99: handler_threatOnDebuff(9, "Demoralizing Roar (Rank 1)"),
          1735: handler_threatOnDebuff(15, "Demoralizing Roar (Rank 2)"),
          9490: handler_threatOnDebuff(20, "Demoralizing Roar (Rank 3)"),
          9747: handler_threatOnDebuff(30, "Demoralizing Roar (Rank 4)"),
          9898: handler_threatOnDebuff(39, "Demoralizing Roar"),
+         26998: handler_threatOnDebuff(45, "Demoralizing Roar 6"),
 
          6795: threatFunctions.concat(handler_taunt, handler_markSourceOnMiss(borders.taunt)), //("Growl"),
          5229: handler_energize, //("Enrage"),
@@ -1016,6 +1023,8 @@ const spellFunctions = {
          778: handler_threatOnDebuff(108, "Faerie Fire (Rank 2)"),
         9749: handler_threatOnDebuff(108, "Faerie Fire (Rank 3)"),
         9907: handler_threatOnDebuff(108, "Faerie Fire"),
+
+        26993: handler_threatOnDebuff(127, "Faerie Fire Rank 5"),
 
         16870: handler_zero, //("Clearcasting"),
         29166: handler_zero, //("Innervate"),
