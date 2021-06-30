@@ -39,6 +39,7 @@ const buffNames = {
 	9634: "Dire Bear Form",
 	768: "Cat Form",
 	25780: "Righteous Fury",
+	28880: "Gift of the Naaru"
 }
 
 const buffMultipliers = {
@@ -758,24 +759,27 @@ const spellFunctions = {
         11374: handler_threatOnDebuff(90, "Gift of Arthas"),
         /* Damage/Weapon Procs */
         20007: handler_zero, //("Heroic Strength (Crusader)"),
-        18138: handler_damage, //("Shadow Bolt (Deathbringer Proc)"),
-        24388: handler_damage, //("Brain Damage (Lobotomizer Proc)"),
-        23267: handler_damage, //("Firebolt (Perdition's Proc)"),
-        18833: handler_damage, //("Firebolt (Alcor's Proc)"),
-        
-        21992: threatFunctions.concat(handler_damage, handler_threatOnDebuff(90)), // Thunderfury
-        27648: handler_threatOnDebuff(145, "Thunderfury"),
+        28093: handler_damage, //Mongoose,
+
+        21992: threatFunctions.concat(handler_modDamage(0.5), handler_threatOnDebuff(63)), // Thunderfury
+        27648: handler_threatOnDebuff(0, "Thunderfury"), //fixed tf for tbc
         
         /* Thorn Effects */
-         9910: handler_damage, //("Thorns"),  //Thorns (Rank 6)
+        9910: handler_damage, //("Thorns"),  //Thorns (Rank 6)
+        26992: handler_damage, //("Thorns"),  //Thorns (Rank 7)
         17275: handler_damage, //("Heart of the Scale"), //Heart of the Scale
-        22600: handler_damage, //("Force Reactive Disk"), //Force Reactive
         11350: handler_zero, //("Oil of Immolation"),   //Oil of Immolation (buff)
         11351: handler_damage, //("Oil of Immolation"), //Oil of Immolation (dmg)
         
         /* Explosives */
         13241: handler_damage, //("Goblin Sapper Charge"), //Goblin Sapper Charge
-    
+        //30552: handler_damage, // Mana Potion Injector
+    	30486: handler_damage, //Super Sapper Charge
+    	39965: handler_damage, //Frost Grenades
+    	30217: handler_damage, //Adamantite Grenade
+    	30461: handler_damage, //The Bigger One
+    	19821: handler_damage, //Arcane Bomb
+    	30216: handler_damage, //Fel Iron Bomb
     
         /* Zero Threat Abilities */
 		71:    handler_zero,		// Defensive Stance
@@ -809,6 +813,8 @@ const spellFunctions = {
         23892: handler_damage, //("Bloodthirst"), //Rank 2
         23893: handler_damage, //("Bloodthirst"), //Rank 3
         23894: handler_damage, //("Bloodthirst"), //Rank 4
+        25251: handler_damage, //("Bloodthirst"), //Rank 5
+        30335: handler_damage, //("Bloodthirst"), //Rank 6
         23888: handler_zero, //("Bloodthirst"),   //Buff
         23885: handler_zero, //("Bloodthirst"),   //Buff
 		23891: handler_heal, // BT heal buff
@@ -823,8 +829,8 @@ const spellFunctions = {
         11566: handler_threatOnHit(137, "Heroic Strike"),
         11567: handler_threatOnHit(145, "Heroic Strike"),
         25286: handler_threatOnHit(175, "Heroic Strike"), // (AQ)
-        29707:  handler_threatOnHit(194, "Heroic Strike"), // LVL 10
-        30324:  handler_threatOnHit(212, "Heroic Strike"), // Not found real threat valus for this, just predicted
+        29707: handler_threatOnHit(194, "Heroic Strike"), // LVL 10
+        30324: handler_threatOnHit(212, "Heroic Strike"), // LVL 11 Not found real threat valus for this, just predicted
      
         //Shield Slam
         23922: handler_threatOnHit(178, "Shield Slam (Rank 1)"), //Rank 1
@@ -837,12 +843,15 @@ const spellFunctions = {
 		// Shield Bash
 		72: handler_modDamagePlusThreat(1.5, 36),
 		1671: handler_modDamagePlusThreat(1.5, 96),
-		1672: handler_modDamagePlusThreat(1.5, 96), // THREAT UNKNOWN
+		1672: handler_modDamagePlusThreat(1.5, 156), //source https://docs.google.com/spreadsheets/d/19uCf8i6jhHSA3gmTkOoa3d9_RhrIEbvT7QP4q0wRBUo/edit#gid=1828897856
+		29704: handler_modDamagePlusThreat(1.5, 192),
 
         //Revenge
-        11601: handler_modDamagePlusThreat(2.25, 243), //Rank 5
-        25288: handler_modDamagePlusThreat(2.25, 270), //Rank 6 (AQ)
-        12798: handler_zero, //("Revenge Stun"),           //Revenge Stun
+        11601: handler_modDamagePlusThreat(1, 150), //Rank 5
+        25288: handler_modDamagePlusThreat(1, 175), //Rank 6 (AQ)
+        25269: handler_modDamagePlusThreat(1, 186), //Rank 7
+        30357: handler_modDamagePlusThreat(1, 200), //Rank 8
+        12798: handler_threatOnDebuff(20), //("Revenge Stun"),           //Revenge Stun
      
         //Cleave
           845: handler_threatOnHit(10, "Cleave"),  //Rank 1
@@ -850,21 +859,23 @@ const spellFunctions = {
         11608: handler_threatOnHit(60, "Cleave"),  //Rank 3
         11609: handler_threatOnHit(70, "Cleave"),  //Rank 4
         20569: handler_threatOnHit(100, "Cleave"), //Rank 5
+        25231: handler_threatOnHit(125, "Cleave"), //Rank 6
      
         //Whirlwind
-         1680: handler_modDamage(1.25), //("Whirlwind"), //Whirlwind
-		6343: handler_modDamage(2.5), // Thunder Clap r1
-		8198: handler_modDamage(2.5), // Thunder Clap r2
-		8204: handler_modDamage(2.5), // Thunder Clap r3
-		8205: handler_modDamage(2.5), // Thunder Clap r4
-		11580: handler_modDamage(2.5), // Thunder Clap r5
-		11581: handler_modDamage(2.5), // Thunder Clap r6
-
+        1680: handler_modDamage(1.25), //("Whirlwind"), //Whirlwind
+		6343: handler_modDamage(1.75), // Thunder Clap r1
+		8198: handler_modDamage(1.75), // Thunder Clap r2
+		8204: handler_modDamage(1.75), // Thunder Clap r3
+		8205: handler_modDamage(1.75), // Thunder Clap r4
+		11580: handler_modDamage(1.75), // Thunder Clap r5
+		11581: handler_modDamage(1.75), // Thunder Clap r6
+		25264: handler_modDamage(1.75), // Thunder Clap r7
      
         //Hamstring
 		1715: handler_modDamagePlusThreat(1.25, 20), // R1
 		7372: handler_threatOnHit(101), // R2, from outdated sheet
-        7373: handler_threatOnHit(145, "Hamstring"),
+        7373: handler_modDamagePlusThreat(1.25, 135), //r3
+        25212: handler_modDamagePlusThreat(1.25, 167), //r4
      
         //Intercept
         20252: handler_modDamage(2), //Intercept
@@ -873,21 +884,32 @@ const spellFunctions = {
         20614: handler_zero, //("Intercept Stun"),         //Intercept Stun (Rank 2)
         20617: handler_modDamage(2), //Intercept (Rank 3)
         20615: handler_zero, //("Intercept Stun"),         //Intercept Stun (Rank 3)
+        25275: handler_modDamage(2), //Intercept (Rank 5)
      
         //Execute
         20647: handler_modDamage(1.25, "Execute"),
+        25236: handler_modDamage(1.25, "Execute"),
      
         /* Abilities */
         //Sunder Armor
 		7386: handler_castCanMiss(45), // Rank 1
         11597: handler_castCanMiss(261, "Sunder Armor"), //Rank 5
+        25225: handler_castCanMiss(301, "Sunder Armor"), //Rank 6
      
         //Battleshout
         11551: handler_threatOnBuff(52, "Battle Shout"), //Rank 6
         25289: handler_threatOnBuff(60, "Battle Shout"), //Rank 7 (AQ)
+        2048: handler_threatOnBuff(69, "Battle Shout"), //Rank 8
+
+        //Devastate
+        30022: handler_threatOnHit(100), //devastate, not calculating first 5 SA stacks with large amount of agro...
+
+        //Commanding Shout
+        469: handler_threatOnBuff(68, "Commanding Shout"), //Rank 8
      
         //Demo Shout
         11556: handler_threatOnDebuff(43, "Demoralizing Shout"),
+        25203: handler_threatOnDebuff(56, "Demoralizing Shout"), //rank 7
      
         //Mocking Blow
         20560: threatFunctions.concat(handler_damage, handler_markSourceOnMiss(borders.taunt)), //("Mocking Blow"),

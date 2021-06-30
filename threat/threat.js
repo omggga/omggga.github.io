@@ -235,20 +235,6 @@ class Unit {
 				if (Unit.eventToKey(events[i], "target") !== key) continue;
 				let aid = events[i].ability.guid;
 				if (!(aid in notableBuffs)) continue;
-				if (aid === 23397 && t === "applydebuff") { // Special handler for Nefarian's warrior class call
-					delete this.buffs[71];
-					delete this.buffs[2457];
-					this.buffs[2458] = true;
-				}
-				if (aid === 23398) { // Druid class call
-					if (t === "applydebuff") {
-						delete this.buffs[5487];
-						delete this.buffs[9634];
-						this.buffs[768] = true;
-					} else if (t === "removedebuff") {
-						delete this.buffs[768];
-					}
-				}
 				if (buffEvents[t] === 1) {
 					this.buffs[aid] = true;
 				} else {
@@ -320,7 +306,7 @@ class Player extends Unit {
 		console.assert("initialBuffs" in info, "Player info not properly initialised.", info);
 		this.checkWarrior(events); // Extra stance detection
 		this.checkPaladin(events); // Extra Righteous Fury detection
-		this.checkFaction(tranquilAir); // BoS and tranquil air
+		this.checkFaction(tranquilAir);
 		let a = info.initialBuffs;
 		for (let k in a) {
 			if (a[k] === 1) {
@@ -336,16 +322,12 @@ class Player extends Unit {
 	isBuffInferred(buffId) {
 		return (this.global.initialBuffs[buffId]-3) % 3 >= 0;
 	}
-	// Blessing of Salvation and Tranquil Air detection
+	// Gift of Naaru is alliance only
 	checkFaction(tranquilAir = false) {
 		if (this.dies || this.tank) return;
-		if (this.global.faction === "Alliance") {
-			if (1038 in this.buffs || !this.isBuffInferred(25895)) return;
-			this.buffs[25895] = true;
-		} else if (this.global.faction === "Horde") {
-			if (!tranquilAir || !this.isBuffInferred(25909)) return;
-			this.buffs[25909] = true;
-		}
+
+		this.buffs[25895] = true;
+		this.buffs[25909] = true;
 	}
 	// Extra stance detection
 	checkWarrior(events) {
@@ -462,7 +444,7 @@ class NPC extends Unit {
 			Plotly.restyle(el_plot, {"marker.color": colors});
 		}
 		createCheckbox(el_div, colorByClass, "Color by class", x=>{colorByClass = x; recolorPlot()});
-		if (fight.faction == "Horde") createCheckbox(el_div, fight.tranquilAir, "Tranquil Air", x => {fight.tranquilAir = x; fight.process(); selectEnemy();});
+		createCheckbox(el_div, fight.tranquilAir, "Tranquil Air", x => {fight.tranquilAir = x; fight.process(); selectEnemy();});
 		plotXRange = [0, (fight.end - fight.start) / 1000];
 		Plotly.newPlot(el_plot, plotData, {title: `Threat - ${this.name}`, titlefont: {color: "#fff"}, xaxis:{title:"Time (s)", titlefont: {color: "#fff"}, tickcolor: "#666", tickfont: {color: "#fff"}, rangemode: "tozero", gridcolor: "#666", linecolor: "#999", range: plotXRange.slice()},yaxis:{title:"Threat", titlefont: {color: "#fff"}, tickcolor: "#666", tickfont: {color: "#fff"}, rangemode: "tozero", gridcolor: "#666", linecolor: "#999"}, width:1920, height: 1080, hovermode: "closest", plot_bgcolor: "#222", paper_bgcolor: "#222", legend: {font: {color: "#fff"}}});
 		el_plot.on("plotly_click", e => {
@@ -480,43 +462,20 @@ class NPC extends Unit {
 }
 
 class Fight {
-	constructor(reportId, fight, globalUnits, faction) {
+	constructor(reportId, fight, globalUnits) {
 		this.name = fight.name;
 		this.start = fight.start_time;
 		this.end = fight.end_time;
 		this.id = fight.id;
 		this.encounter = fight.boss;
 		this.globalUnits = globalUnits;
-		this.faction = faction;
 		this.reportId = reportId;
 		this.tranquilAir = false;
 	}
 	async fetch() {
 		if ("events" in this) return;
 		this.events = await fetchWCLreport(this.reportId + "?", this.start, this.end);
-		// Custom events
-		if (this.encounter === 791) { // High Priestess Arlokk
-			let u;
-			for (let k in this.globalUnits) {
-				if (this.globalUnits[k].name === this.name) {
-					u = this.globalUnits[k];
-					break;
-				}
-			}
-			if (!u) return;
-			let lastTime = this.start;
-			for (let i = 0; i < this.events.length; ++i) {
-				if (this.events[i].type !== "cast" || this.events[i].sourceID !== u.id) continue;
-				if (this.events[i].timestamp - lastTime > 30000) {
-					for (let j = i-1; j >= 0; --j) {
-						if (this.events[i].timestamp - this.events[j].timestamp < 5000) continue;
-						this.events.splice(j+1, 0, {ability: {guid: -1, name: "Estimated re-entry"}, timestamp: this.events[j].timestamp, type: "cast", sourceID: u.id, targetID: -1});
-						break;
-					}
-				}
-				lastTime = this.events[i].timestamp;
-			}
-		}
+		// Custom events can be written here
 	}
 	eventToUnit(ev, unit) { // Unit should be "source" or "target"
 		// TODO: Fix units that are both enemies and friends in a single fight
@@ -659,30 +618,23 @@ class Report {
 					coeff:   t.coeff,
 				}
 			}
-			// Get faction and add class-specific initial buff settings
 			switch (f.type) {
-			case "Paladin":
-				f.initialBuffs[25780] = 0;	// Righteous Fury
-				this.faction = "Alliance";
-				break;
-			case "Shaman":
-				this.faction = "Horde";
-				break;
-			case "Warrior":
-				f.initialBuffs[71] = 0;		// Stances
-				f.initialBuffs[2457] = 0;	
-				f.initialBuffs[2458] = 0;
-				break;
-			case "Druid":
-				f.initialBuffs[5487] = 0;	// Forms
-				f.initialBuffs[9634] = 0;
-				f.initialBuffs[768] = 0;
-				break;
+				case "Paladin":
+					f.initialBuffs[25780] = 0;	// Righteous Fury
+					break;
+				case "Warrior":
+					f.initialBuffs[71] = 0;		// Stances
+					f.initialBuffs[2457] = 0;
+					f.initialBuffs[2458] = 0;
+					break;
+				case "Druid":
+					f.initialBuffs[5487] = 0;	// Forms
+					f.initialBuffs[9634] = 0;
+					f.initialBuffs[768] = 0;
+					break;
 			}
 		}
-		if (this.faction) {
-			for (let u of allFriendlies) u.faction = this.faction;
-		}
+
 		this.units = {};
 		for (let u of this.data.enemyPets) this.units[u.id] = u;
 		for (let u of this.data.enemies) this.units[u.id] = u;
@@ -690,7 +642,7 @@ class Report {
 		for (let u of this.data.friendlies) this.units[u.id] = u;
 		this.fights = {};
 		for (let f of this.data.fights) {
-			this.fights[f.id] = new Fight(this.reportId, f, this.units, this.faction);
+			this.fights[f.id] = new Fight(this.reportId, f, this.units);
 		}
 	}
 }
