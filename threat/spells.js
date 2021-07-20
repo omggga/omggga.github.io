@@ -667,7 +667,7 @@ const spellFunctions = {
 8637: handler_castCanMissNoCoefficient(-390), // Feint r3
 11303: handler_castCanMissNoCoefficient(-600), // Feint r4
 25302: handler_castCanMissNoCoefficient(-800), // Feint r5
-26866: handler_expose()
+26866: handler_expose(),
 
 // Priest
 6788: handler_zero, // Weakened Soul
