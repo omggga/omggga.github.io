@@ -780,14 +780,14 @@ const spellFunctions = {
 
         21992: threatFunctions.concat(handler_modDamage(0.5), handler_threatOnDebuff(63)), // Thunderfury
         27648: handler_threatOnDebuff(0, "Thunderfury"), //Tbc fixed https://github.com/magey/tbc-warrior/wiki/Threat-Values
-        
+
         /* Thorn Effects */
         9910: handler_damage, //("Thorns"),  //Thorns (Rank 6)
         26992: handler_damage, //("Thorns"),  //Thorns (Rank 7)
         17275: handler_damage, //("Heart of the Scale"), //Heart of the Scale
         11350: handler_zero, //("	"),   //Oil of Immolation (buff)
         11351: handler_damage, //("Oil of Immolation"), //Oil of Immolation (dmg)
-        
+
         /* Explosives */
         13241: handler_damage, //("Goblin Sapper Charge"), //Goblin Sapper Charge
         //30552: handler_damage, // Mana Potion Injector
@@ -805,7 +805,7 @@ const spellFunctions = {
 		35476: handler_zero, //Drums of Battle
 		35477: handler_zero, //Drums of Speed
 		35478: handler_zero, //Drums of Restoration
-    
+
         /* Zero Threat Abilities */
 		71:    handler_zero,		// Defensive Stance
 		2457:  handler_zero,		// Battle Stance
@@ -816,7 +816,7 @@ const spellFunctions = {
         26635: handler_zero, //("Berserking (Troll racial)"), //Berserking (Troll racial)
         22850: handler_zero, //("Sanctuary"), //Sanctuary
          9515: handler_zero, //("Summon Tracking Hound"), //Summon Tracking Hound
-    
+
         /* Consumable Buffs (zero-threat) */
         10667: handler_zero, //("Rage of Ages"), //Rage of Ages
         25804: handler_zero, //("Rumsey Rum Black Label"), //Rumsey Rum Black Label
