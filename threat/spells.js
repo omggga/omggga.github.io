@@ -1,4 +1,4 @@
-let DEBUGMODE = false;
+let DEBUGMODE = true;
 
 let borders = {
 	taunt: [3, "#ffa500"],
@@ -38,8 +38,8 @@ const buffNames = {
 	5487: "Bear Form",
 	9634: "Dire Bear Form",
 	768: "Cat Form",
-	25780: "Righteous Fury",
-	28880: "Gift of the Naaru"
+	25780: "Righteous Fury"
+	//28880: "Gift of the Naaru"
 }
 
 const buffMultipliers = {
@@ -54,6 +54,7 @@ const buffMultipliers = {
 	768:   getThreatCoefficient(0.71),		// Cat Form
 	25780: getThreatCoefficient({2:1.6}),	// Righteous Fury
 	26400: getThreatCoefficient(0.3),		// Fetish of the Sand Reaver
+	//33486: getThreatCoefficient(-1075),	//Jewel of Charismatic Mystique
 }
 
 // The leaf elements are functions (buffs,rank) => threatCoefficient
