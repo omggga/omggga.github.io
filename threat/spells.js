@@ -48,7 +48,7 @@ const buffMultipliers = {
 	25909: getThreatCoefficient(0.8),		// Tranquil Air Totem Aura
 	71:    getThreatCoefficient(1.3),		// Defensive Stance
 	2457:  getThreatCoefficient(0.8),		// Battle Stance
-	2458:  getThreatCoefficient(0.7),		// Berserker Stance //imp bers stance as default we think
+	2458:  getThreatCoefficient(0.8),		// Berserker Stance, no way to check "Improved Berserker Stance" talant, so lets calculate as default
 	5487:  getThreatCoefficient(1.3),		// Bear Form
 	9634:  getThreatCoefficient(1.3),		// Dire Bear Form
 	768:   getThreatCoefficient(0.71),		// Cat Form
@@ -367,6 +367,15 @@ function handler_castCanMiss(threatValue) {
 			threatFunctions.sourceThreatenTarget(ev, fight, -threatValue);
 		}
     }
+}
+
+function handler_devastate() {
+    return (ev, fight) => {
+		if (ev.type !== "damage" || ev.hitType > 6 || ev.hitType === 0) return;
+		let threatValue;
+		debugger
+		threatFunctions.sourceThreatenTarget(ev, fight, ev.amount + (ev.absorbed || 0) + threatValue);
+	}
 }
 
 function handler_castCanMissNoCoefficient(threatValue) {
@@ -759,16 +768,24 @@ const spellFunctions = {
         11374: handler_threatOnDebuff(90, "Gift of Arthas"),
         /* Damage/Weapon Procs */
         20007: handler_zero, //("Heroic Strength (Crusader)"),
-        28093: handler_damage, //Mongoose,
+		18138: handler_damage, //("Shadow Bolt (Deathbringer Proc)"),
+        24388: handler_damage, //("Brain Damage (Lobotomizer Proc)"),
+        23267: handler_damage, //("Firebolt (Perdition's Proc)"),
+        18833: handler_damage, //("Firebolt (Alcor's Proc)"),
+        28093: handler_zero, //Mongoose,
+        42976: handler_zero, //Executioner
+        28005: handler_zero, //Battlemaster, Flags: Generates no threat
+        27996: handler_zero, //Spellsurge
+        46629: handler_damage, //Deathfrost
 
         21992: threatFunctions.concat(handler_modDamage(0.5), handler_threatOnDebuff(63)), // Thunderfury
-        27648: handler_threatOnDebuff(0, "Thunderfury"), //fixed tf for tbc
+        27648: handler_threatOnDebuff(0, "Thunderfury"), //Tbc fixed https://github.com/magey/tbc-warrior/wiki/Threat-Values
         
         /* Thorn Effects */
         9910: handler_damage, //("Thorns"),  //Thorns (Rank 6)
         26992: handler_damage, //("Thorns"),  //Thorns (Rank 7)
         17275: handler_damage, //("Heart of the Scale"), //Heart of the Scale
-        11350: handler_zero, //("Oil of Immolation"),   //Oil of Immolation (buff)
+        11350: handler_zero, //("	"),   //Oil of Immolation (buff)
         11351: handler_damage, //("Oil of Immolation"), //Oil of Immolation (dmg)
         
         /* Explosives */
@@ -780,6 +797,14 @@ const spellFunctions = {
     	30461: handler_damage, //The Bigger One
     	19821: handler_damage, //Arcane Bomb
     	30216: handler_damage, //Fel Iron Bomb
+    	46567: handler_damage, //Rocket Launch
+    	30527: handler_damage, //Flame cannon. Need tests.
+
+    	/* Drums, dont know threat values */
+    	35475: handler_zero, //Drums of War
+		35476: handler_zero, //Drums of Battle
+		35477: handler_zero, //Drums of Speed
+		35478: handler_zero, //Drums of Restoration
     
         /* Zero Threat Abilities */
 		71:    handler_zero,		// Defensive Stance
@@ -830,7 +855,7 @@ const spellFunctions = {
         11567: handler_threatOnHit(145, "Heroic Strike"),
         25286: handler_threatOnHit(175, "Heroic Strike"), // (AQ)
         29707: handler_threatOnHit(194, "Heroic Strike"), // LVL 10
-        30324: handler_threatOnHit(212, "Heroic Strike"), // LVL 11 Not found real threat valus for this, just predicted
+        30324: handler_threatOnHit(214, "Heroic Strike"), // LVL 11, not tested threat value
      
         //Shield Slam
         23922: handler_threatOnHit(178, "Shield Slam (Rank 1)"), //Rank 1
@@ -870,10 +895,12 @@ const spellFunctions = {
 		11580: handler_modDamage(1.75), // Thunder Clap r5
 		11581: handler_modDamage(1.75), // Thunder Clap r6
 		25264: handler_modDamage(1.75), // Thunder Clap r7
+
+		676: handler_threatOnDebuff(99), //Disarm
      
         //Hamstring
 		1715: handler_modDamagePlusThreat(1.25, 20), // R1
-		7372: handler_threatOnHit(101), // R2, from outdated sheet
+		7372: handler_modDamagePlusThreat(101), // r2
         7373: handler_modDamagePlusThreat(1.25, 135), //r3
         25212: handler_modDamagePlusThreat(1.25, 167), //r4
      
@@ -885,10 +912,11 @@ const spellFunctions = {
         20617: handler_modDamage(2), //Intercept (Rank 3)
         20615: handler_zero, //("Intercept Stun"),         //Intercept Stun (Rank 3)
         25275: handler_modDamage(2), //Intercept (Rank 5)
+        25274: handler_zero, //("Intercept Stun"),
      
         //Execute
-        20647: handler_modDamage(1.25, "Execute"),
-        25236: handler_modDamage(1.25, "Execute"),
+        20647: handler_modDamage(1.25, "Execute"), //r6
+        25236: handler_modDamage(1.25, "Execute"), //r7
      
         /* Abilities */
         //Sunder Armor
@@ -902,7 +930,7 @@ const spellFunctions = {
         2048: handler_threatOnBuff(69, "Battle Shout"), //Rank 8
 
         //Devastate
-        30022: handler_threatOnHit(100), //devastate, not calculating first 5 SA stacks with large amount of agro...
+        30022: handler_devastate(),
 
         //Commanding Shout
         469: handler_threatOnBuff(68, "Commanding Shout"), //Rank 8
@@ -913,12 +941,14 @@ const spellFunctions = {
      
         //Mocking Blow
         20560: threatFunctions.concat(handler_damage, handler_markSourceOnMiss(borders.taunt)), //("Mocking Blow"),
+		25266: threatFunctions.concat(handler_damage, handler_markSourceOnMiss(borders.taunt)), //("Mocking Blow"),
      
         //Overpower
         11585: handler_damage, //("Overpower"),
      
         //Rend
         11574: handler_damage, //("Rend"),
+        25208: handler_damage, //("Rend"), //r8
 
 
 
@@ -946,6 +976,8 @@ const spellFunctions = {
        12975: handler_zero, //("Last Stand (cast)"), //Last Stand (cast)
        12976: handler_zero, //("Last Stand (buff)"), //Last Stand (buff)
         2565: handler_zero, //("Shield Block"), //Shield Block
+
+        30032: handler_zero, //Rampage
 
 
         /* Consumable */
